@@ -1,5 +1,5 @@
 # Multivariate Statistik
-Master Data Science
-Hochschule Darmstadt
+Master Data Science  
+Hochschule Darmstadt  
 2019
 
