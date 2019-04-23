@@ -1,2 +1,5 @@
-# multivariate-statistics
-Multivariate Statistik 2019
+# Multivariate Statistik
+Master Data Science
+Hochschule Darmstadt
+2019
+
