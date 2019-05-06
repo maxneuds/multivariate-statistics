@@ -1,0 +1,213 @@
+---
+output: pdf_document
+header-includes: 
+- \usepackage[utf8]{inputenc}
+- \usepackage[T1]{fontenc}
+- \usepackage[ngerman]{babel}
+- \usepackage{amsmath,amssymb,amsthm}
+- \usepackage{dsfont}
+- \usepackage{listings}
+- \usepackage{floatrow}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- '\fancyhead[C,C]{Robin Baudisch, Merlin Kopfmann, Maximilian Neudert}'
+- \fancyhead[L]{}
+- \fancyhead[R]{}
+- \fancyfoot[C,C]{\thepage}
+- \renewcommand{\footrulewidth}{0.4pt}
+---
+
+<style type="text/css">
+body{
+  font-size: 12px;
+}
+h1 {
+  font-size: 18px;
+}
+h1 {
+  font-size: 14px;
+}
+h1 {
+  font-size: 12px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(error=TRUE,        # Keep compiling upon error
+                      collapse=TRUE,     # collapse by default
+                      echo=TRUE,         # echo code by default
+                      comment = "#>",    # change comment character
+                      fig.width = 10,     # set figure width
+                      out.width = "100%", # set width of displayed images
+                      warning=TRUE,      # show R warnings
+                      message=FALSE)     # show R messages
+```
+
+<!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
+
+set.seed(42)
+
+# Aufgabe 1
+
+## a)
+
+```{r}
+y <- c(5.1,15.6,28.2,11.1,4.0,31.5,19.5)
+time <- c(18.00,19.50,20.00,20.50,21.25,21.50, 22.00)
+gender <- c(0,1,1,0,0,1,1)
+sig_hat <- 6.8
+R_sqrt <- 0.73
+X <- matrix(c(1, 1, 1, 1, 1, 1, 1, 18, 19.5, 20, 20.5, 21.25, 21.5, 22, 0, 1, 1, 0, 0, 1, 1), nrow = 7, ncol = 3)
+XTX <- solve(t(X)%*%X)
+b_hat <- XTX%*%t(X)%*%y
+model <- lm(y~gender+time)
+model$coefficients
+b_hat
+```
+
+## b) 
+
+Sowohl Uhrzeit als auch Geschlecht haben einen positiven Einfluss auf die abhaengige Variable Trinkgeld. 
+Um eine Aussage ueber die Wichtigkeit der beiden unabhaengigen Variablen zu treffen, muesste man die Koeffizienten 
+allerdings noch standardisieren.
+
+## c)
+
+```{r}
+y_m <- c(5.1, 11.1, 4)
+X_m <- matrix(c(1, 1, 1, 18, 20.5, 21.25), nrow = 3, ncol = 2) 
+XTX_m <- solve(t(X_m)%*%X_m)
+b_hat_m <- XTX_m%*%t(X_m)%*%y_m
+
+y_w <- c(15.6, 28.2, 31.5, 19.5)
+X_w <- matrix(c(1, 1, 1, 1, 10.5, 20, 21.5, 22), nrow = 4, ncol = 2) 
+XTX_w <- solve(t(X_w)%*%X_w)
+b_hat_w <- XTX_w%*%t(X_w)%*%y_w
+
+b_hat_m[2,]
+b_hat_w[2,]
+
+b_hat_m
+b_hat_w 
+
+plot(c(18, 20.5, 21.25), y_m, xlab = 'Uhrzeit', ylab = 'Trinkgeld', main = 'Regression: Maenner')
+abline(b_hat_m, lw=2, col='red')
+
+plot(c(10.5, 20, 21.5, 22), y_w, xlab = 'Uhrzeit', ylab = 'Trinkgeld', main = 'Regression: Frauen')
+abline(b_hat_w, lw=2, col='red')
+```
+
+## d) 
+
+H0: "Es besteht kein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
+H1: "Es besteht ein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
+
+```{r}
+n <- 7
+p <- 3
+beta <- b_hat[3,]
+
+test <- beta/(sig_hat*sqrt(XTX[3,3]))
+test
+
+t_value <-  qt(c(0.025, 0.975), df=n-p)
+
+if (t_value[1] < test & test < t_value[2]){
+  print('H0 wird nicht verworfen!') 
+  } else {
+    print('H0 wird verworfen!')
+  }
+```
+
+## e) 
+TO DO! Max pls :)
+
+# Aufgabe 2
+
+## a)
+
+```{r}
+library(ISLR)
+library(ggplot2)
+
+mpg_hist <- ggplot(Auto, aes(x=mpg)) + geom_histogram(bins = 15)
+log_mpg_hist <- ggplot(Auto, aes(x=log(mpg))) + geom_histogram(bins = 15)
+mpg_hist
+log_mpg_hist
+
+qqnorm(Auto$mpg)
+qqline(Auto$mpg)
+
+qqnorm(log(Auto$mpg))
+qqline(log(Auto$mpg))
+```
+Laut Histogramm gleicht mpg einer rechtsschiefen Verteilung, log(mpg) kommt laut Histogramm einer Normalverteilung näher.
+Die QQ-Plots sind schwieriger auszuwerten, beide Variablen weichen an den Rändern deutlich von der Geraden ab. 
+Allerdings weichen die Punkte von log(mpg) an den Rändern "symmetrischer" von der Geraden ab, als bei mpg.
+
+## b)
+
+```{r}
+X <- matrix(NA, nrow = nrow(Auto), ncol = 2)
+X[,1] <- rep(1, nrow(Auto))
+X[,2] <- Auto$horsepower
+XTX <- solve(t(X)%*%X)
+b_hat <- XTX%*%t(X)%*%log(Auto$mpg)
+b_hat[2,]
+
+ggplot(Auto, aes(x=horsepower, y=log(mpg))) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
+```
+Auf den ersten Blick deutet ein beta von -0.007 auf keinen Zusammenhang zwischen Prädiktor und Zielgröße hin.
+Plottet man sich Prädiktor und Zielgröße allerdings, ist ein klarer negativer linearer Zusammenhang erkennbar.
+Da horsepower und log(mpg) unterschiedlich skaliert sind, ist ein Ablesen des Zusammenhangs anhand beta1 irreführend.
+horsepower müsste ebenfalls logarithmiert werden.
+
+```{r}
+X_log <- matrix(NA, nrow = nrow(Auto), ncol = 2)
+X_log[,1] <- rep(1, nrow(Auto))
+X_log[,2] <- log(Auto$horsepower)
+XTX_log <- solve(t(X_log)%*%X_log)
+b_hat_log <- XTX_log%*%t(X_log)%*%log(Auto$mpg)
+b_hat_log[2,]
+
+n <- nrow(Auto)
+p <- 3
+beta <- b_hat[2,]
+sig_hat <- sd(log(Auto$mpg))
+
+test <- beta/(sig_hat*sqrt(XTX[2,2]))
+test
+
+t_value <-  qt(c(0.025, 0.975), df=n-p)
+
+if (t_value[1] < test & test < t_value[2]){
+  print('H0 wird nicht verworfen!') 
+} else {
+  print('H0 wird verworfen!')
+}
+
+mpg98 <- exp(b_hat[1,] + b_hat[2,]*98)
+mpg98
+
+diff_20 <- abs(20*b_hat[2,])
+diff_20
+
+y_hat <- c()
+for(i in 1:nrow(Auto)){
+  y_hat[i] <- (b_hat[1,] + b_hat[2,]*Auto$horsepower[i])
+}
+
+eps <- log(Auto$mpg) - y_hat
+qqnorm(eps)
+qqline(eps)
+
+hist(eps)
+
+
+shapiro.test(eps)
+``` 
+Laut Shapiro-Wilk-Test wird H0 ("Die Residuen sind normalverteilt.") nicht verworfen.
+Wir können von einer Normalverteilung ausgehen. Die Plots bestätigen unsere Vermutung. 
+
+## c)
+TO DO! Max pls :)
