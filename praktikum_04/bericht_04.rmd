@@ -84,7 +84,7 @@ model$coefficients
 
 ## b) 
 
-Wir erhalten dann eine Schätzung der Regressionskoeffizienten mittels:
+Wir erhalten dann eine Sch??tzung der Regressionskoeffizienten mittels:
 
 $$
 \begin{aligned}
@@ -92,7 +92,7 @@ $$
 \end{aligned}
 $$
 
-Sowohl Uhrzeit als auch Geschlecht (Frauen) haben einen positiven Einfluss auf die abhängige Variable Trinkgeld. Dabei ist das Geschlecht deutlich größer gewichtet als die Uhrzeit.
+Sowohl Uhrzeit als auch Geschlecht (Frauen) haben einen positiven Einfluss auf die abh??ngige Variable Trinkgeld. Dabei ist das Geschlecht deutlich gr????er gewichtet als die Uhrzeit.
 
 ## c)
 
@@ -121,23 +121,23 @@ f = t(b) %*% c(0,1,1)
 m = t(b) %*% c(0,1,0)
 ```
 
-Die Änderung des zu erwartenden Trinkgelds pro Stunde ist die Steigung der Regression, das heißt:
+Die ??nderung des zu erwartenden Trinkgelds pro Stunde ist die Steigung der Regression, das hei??t:
 
-Trinkgeld pro Stunde Männer: $y = \hat b_1 + 1 \cdot \hat b_2 = `r m`$
+Trinkgeld pro Stunde M??nner: $y = \hat b_1 + 1 \cdot \hat b_2 = `r m`$
 
 Trinkgeld pro Stunde Frauen: $y = \hat b_1 + 1 \cdot \hat b_2 = `r f`$
 
 ## d) 
 
-H0: "Es besteht kein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
-H1: "Es besteht ein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
+H0: "Es besteht kein signfikanter Unterschied der H??he des Trinkgelds unter den Geschlechtern."
+H1: "Es besteht ein signfikanter Unterschied der H??he des Trinkgelds unter den Geschlechtern."
 
 ```{r}
 n <- 7
 p <- 3
 beta <- b[3]
 
-test <- beta/(sig*sqrt(XTX[3,3]))
+test <- beta/(sig*sqrt(iXTX[3,3]))
 
 t_value <-  qt(c(0.025, 0.975), df=n-p)
 
@@ -148,12 +148,12 @@ if (t_value[1] < test & test < t_value[2]){
   }
 ```
 
-Wir erhalten einen Testwert von `r round(test, 2)` und dieser liegt nicht im Ablehnungsbereich `r round(t_value, 2)`. Folglich lehnen wir die Nullhypothese nicht ab.
+Wir erhalten einen Testwert von `r round(test, 2)` und dieser liegt im Ablehnungsbereich `r round(t_value, 2)`. Folglich lehnen wir die Nullhypothese ab.
 
 ## e) 
 
-Der $\operatorname{SSE}$ ist die Quadratsumme der Residuen und damit unmittelbar abhängig von der Skalierung der Zielwerte, deswegen kann man daraus nicht folgern, dass die absolute Trinkgeldhöhe schlechter erklärt wird, als die prozentuale.
-Als Beispiel kann man die Werte hier betrachten, diese liegen im unteren 2-stelligen Bereicht. Nimmt man nun das absolute Trinkgeld in Yen, so befinden sich die Werte im höheren 3-stelligen oder sogar im 4-stelligen Bereich folglich wären bei gleicher Modellgüte die Beträge der Residuen deutlich größer.
+Der $\operatorname{SSE}$ ist die Quadratsumme der Residuen und damit unmittelbar abh??ngig von der Skalierung der Zielwerte, deswegen kann man daraus nicht folgern, dass die absolute Trinkgeldh??he schlechter erkl??rt wird, als die prozentuale.
+Als Beispiel kann man die Werte hier betrachten, diese liegen im unteren 2-stelligen Bereicht. Nimmt man nun das absolute Trinkgeld in Yen, so befinden sich die Werte im h??heren 3-stelligen oder sogar im 4-stelligen Bereich folglich w??ren bei gleicher Modellg??te die Betr??ge der Residuen deutlich gr????er.
 
 # Aufgabe 2
 
@@ -179,9 +179,9 @@ qqnorm(log(Auto$mpg), main='log(mpg)')
 qqline(log(Auto$mpg))
 ```
 
-Laut Histogramm gleicht mpg einer rechtsschiefen Verteilung, log(mpg) kommt laut Histogramm einer Normalverteilung näher.
-Die QQ-Plots sind schwieriger auszuwerten, beide Variablen weichen an den Rändern deutlich von der Geraden ab. 
-Allerdings weichen die Punkte von log(mpg) an den Rändern "symmetrischer" von der Geraden ab, als bei mpg.
+Laut Histogramm gleicht mpg einer rechtsschiefen Verteilung, log(mpg) kommt laut Histogramm einer Normalverteilung n??her.
+Die QQ-Plots sind schwieriger auszuwerten, beide Variablen weichen an den R??ndern deutlich von der Geraden ab. 
+Allerdings weichen die Punkte von log(mpg) an den R??ndern "symmetrischer" von der Geraden ab, als bei mpg.
 
 ## b)
 
@@ -198,8 +198,8 @@ b <- iXTX %*% t(X) %*% log(Auto$mpg)
 ggplot(Auto, aes(x=horsepower, y=log(mpg))) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
 ```
 
-Auf den ersten Blick deutet ein beta von $`r b[2]`$ auf keinen Zusammenhang zwischen Prädiktor und Zielgröße hin.
-Plottet man Zielgröße auf Prädiktor, ist ein klarer negativer linearer Zusammenhang erkennbar. Dies liegt daran, dass horsepower und log(mpg) unterschiedlich skaliert sind und die Steigung der Regression deswegen sehr klein wird.
+Auf den ersten Blick deutet ein beta von $`r b[2]`$ auf keinen Zusammenhang zwischen Pr??diktor und Zielgr????e hin.
+Plottet man Zielgr????e auf Pr??diktor, ist ein klarer negativer linearer Zusammenhang erkennbar. Dies liegt daran, dass horsepower und log(mpg) unterschiedlich skaliert sind und die Steigung der Regression deswegen sehr klein wird.
 
 ```{r}
 x = Auto$horsepower
@@ -215,13 +215,13 @@ val = exp(logval)
 
 $p < 0.001$ und somit ist der Zusammenhang signifikant zum $5\%$ Niveau.
 
-Für ein Auto mit $98$PS würden man anhand des Modells $`r round(val, 2)`$ an mpg erwarten.
+F??r ein Auto mit $98$PS w??rden man anhand des Modells $`r round(val, 2)`$ an mpg erwarten.
 
 ```{r}
 logval = abs(t(b) %*% c(0, 20))
 ```
 
-Der logarithmierte Verbrauch unterscheidet sich für 20PS erwartungsgemäß um $`r logval`$.
+Der logarithmierte Verbrauch unterscheidet sich f??r 20PS erwartungsgem???? um $`r logval`$.
 
 
 ```{r}
@@ -248,15 +248,15 @@ if (t_value[1] < test & test < t_value[2]){
   print('H0 wird verworfen!')
 }
 
-mpg98 <- exp(b_hat[1,] + b_hat[2,]*98)
+mpg98 <- exp(b[1,] + b[2,]*98)
 mpg98
 
-diff_20 <- abs(20*b_hat[2,])
+diff_20 <- abs(20*b[2,])
 diff_20
 
 y_hat <- c()
 for(i in 1:nrow(Auto)){
-  y_hat[i] <- (b_hat[1,] + b_hat[2,]*Auto$horsepower[i])
+  y_hat[i] <- (b[1,] + b[2,]*Auto$horsepower[i])
 }
 
 eps <- log(Auto$mpg) - y_hat
@@ -270,7 +270,7 @@ shapiro.test(eps)
 ```
 
 Laut Shapiro-Wilk-Test wird H0 ("Die Residuen sind normalverteilt.") nicht verworfen.
-Wir können von einer Normalverteilung ausgehen. Die Plots bestätigen unsere Vermutung. 
+Wir k??nnen von einer Normalverteilung ausgehen. Die Plots best??tigen unsere Vermutung. 
 
 ## c)
 
