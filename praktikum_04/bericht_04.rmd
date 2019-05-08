@@ -33,14 +33,15 @@ h1 {
 </style>
 
 ```{r global_options, include=FALSE}
-knitr::opts_chunk$set(error=TRUE,        # Keep compiling upon error
-                      collapse=TRUE,     # collapse by default
-                      echo=TRUE,         # echo code by default
-                      comment = "#>",    # change comment character
-                      fig.width = 10,     # set figure width
-                      out.width = "100%", # set width of displayed images
-                      warning=TRUE,      # show R warnings
-                      message=FALSE)     # show R messages
+knitr::opts_chunk$set(error=TRUE,     # Keep compiling upon error
+                      collapse=TRUE,  # collapse by default
+                      echo=TRUE,      # echo code by default
+                      comment = "#>", # change comment character
+                      warning=TRUE,   # show R warnings
+                      message=FALSE,  # show R messages
+                      out.width = "100%",
+                      out.height = "100%",
+                      fig.width = 10)
 ```
 
 <!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
@@ -49,3 +50,290 @@ set.seed(42)
 
 # Aufgabe 1
 
+## a)
+
+```{r}
+library(MASS)
+sig = 6.8
+R = 0.73
+tgeld = c(5.1,15.6,28.2,11.1,4.0,31.5,19.5)
+y = tgeld
+time = c(18,19.5,20,20.5,21.25,21.5,22)
+gender = c(0,1,1,0,0,1,1)
+eins = rep(1,7)
+
+X = matrix(
+  c(eins, time, gender),
+  nrow = 7,
+  ncol = 3,
+  byrow = FALSE
+)
+
+XT = t(X)
+
+XTX = XT %*% X
+
+iXTX = ginv(XTX)
+
+b = iXTX %*% XT %*% y
+b = round(b, 2)
+
+model <- lm(y~time+gender)
+model$coefficients
+```
+
+## b) 
+
+Wir erhalten dann eine Schätzung der Regressionskoeffizienten mittels:
+
+$$
+\begin{aligned}
+\hat b = (X^T X)^{-1} X^T y \approx (`r b[1]`, `r b[2]`, `r b[3]`)
+\end{aligned}
+$$
+
+Sowohl Uhrzeit als auch Geschlecht (Frauen) haben einen positiven Einfluss auf die abhängige Variable Trinkgeld. Dabei ist das Geschlecht deutlich größer gewichtet als die Uhrzeit.
+
+## c)
+
+```{r}
+y_m <- c(5.1, 11.1, 4)
+X_m <- matrix(c(1, 1, 1, 18, 20.5, 21.25), nrow = 3, ncol = 2) 
+XTX_m <- solve(t(X_m)%*%X_m)
+b_hat_m <- XTX_m%*%t(X_m)%*%y_m
+
+y_w <- c(15.6, 28.2, 31.5, 19.5)
+X_w <- matrix(c(1, 1, 1, 1, 10.5, 20, 21.5, 22), nrow = 4, ncol = 2) 
+XTX_w <- solve(t(X_w)%*%X_w)
+b_hat_w <- XTX_w%*%t(X_w)%*%y_w
+
+par(mfrow=c(1,2))
+
+plot(c(18, 20.5, 21.25), y_m, xlab = 'Uhrzeit', ylab = 'Trinkgeld', main = 'Regression: Maenner')
+abline(b_hat_m, lw=2, col='red')
+
+plot(c(10.5, 20, 21.5, 22), y_w, xlab = 'Uhrzeit', ylab = 'Trinkgeld', main = 'Regression: Frauen')
+abline(b_hat_w, lw=2, col='red')
+```
+
+```{r}
+f = t(b) %*% c(0,1,1)
+m = t(b) %*% c(0,1,0)
+```
+
+Die Änderung des zu erwartenden Trinkgelds pro Stunde ist die Steigung der Regression, das heißt:
+
+Trinkgeld pro Stunde Männer: $y = \hat b_1 + 1 \cdot \hat b_2 = `r m`$
+
+Trinkgeld pro Stunde Frauen: $y = \hat b_1 + 1 \cdot \hat b_2 = `r f`$
+
+## d) 
+
+H0: "Es besteht kein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
+H1: "Es besteht ein signfikanter Unterschied der Höhe des Trinkgelds unter den Geschlechtern."
+
+```{r}
+n <- 7
+p <- 3
+beta <- b[3]
+
+test <- beta/(sig*sqrt(XTX[3,3]))
+
+t_value <-  qt(c(0.025, 0.975), df=n-p)
+
+if (t_value[1] < test & test < t_value[2]){
+  print('H0 wird nicht verworfen!') 
+  } else {
+    print('H0 wird verworfen!')
+  }
+```
+
+Wir erhalten einen Testwert von `r round(test, 2)` und dieser liegt nicht im Ablehnungsbereich `r round(t_value, 2)`. Folglich lehnen wir die Nullhypothese nicht ab.
+
+## e) 
+
+Der $\operatorname{SSE}$ ist die Quadratsumme der Residuen und damit unmittelbar abhängig von der Skalierung der Zielwerte, deswegen kann man daraus nicht folgern, dass die absolute Trinkgeldhöhe schlechter erklärt wird, als die prozentuale.
+Als Beispiel kann man die Werte hier betrachten, diese liegen im unteren 2-stelligen Bereicht. Nimmt man nun das absolute Trinkgeld in Yen, so befinden sich die Werte im höheren 3-stelligen oder sogar im 4-stelligen Bereich folglich wären bei gleicher Modellgüte die Beträge der Residuen deutlich größer.
+
+# Aufgabe 2
+
+## a)
+
+```{r}
+library(ISLR)
+library(ggplot2)
+library(cowplot)
+
+mpg_hist <- ggplot(Auto, aes(x=mpg)) + geom_histogram(bins = 15)
+log_mpg_hist <- ggplot(Auto, aes(x=log(mpg))) + geom_histogram(bins = 15)
+plot_grid(mpg_hist, log_mpg_hist, labels = "AUTO")
+```
+
+```{r}
+par(mfrow=c(1,2))
+
+qqnorm(Auto$mpg, main='mpg')
+qqline(Auto$mpg)
+
+qqnorm(log(Auto$mpg), main='log(mpg)')
+qqline(log(Auto$mpg))
+```
+
+Laut Histogramm gleicht mpg einer rechtsschiefen Verteilung, log(mpg) kommt laut Histogramm einer Normalverteilung näher.
+Die QQ-Plots sind schwieriger auszuwerten, beide Variablen weichen an den Rändern deutlich von der Geraden ab. 
+Allerdings weichen die Punkte von log(mpg) an den Rändern "symmetrischer" von der Geraden ab, als bei mpg.
+
+## b)
+
+```{r}
+X <- matrix(NA, nrow = nrow(Auto), ncol = 2)
+X[,1] <- rep(1, nrow(Auto))
+X[,2] <- Auto$horsepower
+XTX <- t(X) %*% X
+
+iXTX = ginv(XTX)
+
+b <- iXTX %*% t(X) %*% log(Auto$mpg)
+
+ggplot(Auto, aes(x=horsepower, y=log(mpg))) + geom_point() + geom_smooth(method = 'lm', se = FALSE)
+```
+
+Auf den ersten Blick deutet ein beta von $`r b[2]`$ auf keinen Zusammenhang zwischen Prädiktor und Zielgröße hin.
+Plottet man Zielgröße auf Prädiktor, ist ein klarer negativer linearer Zusammenhang erkennbar. Dies liegt daran, dass horsepower und log(mpg) unterschiedlich skaliert sind und die Steigung der Regression deswegen sehr klein wird.
+
+```{r}
+x = Auto$horsepower
+y = log(Auto$mpg)
+fit = aov(y~x)
+summary(fit)
+```
+
+```{r}
+logval = t(b) %*% c(1, 98)
+val = exp(logval)
+```
+
+$p < 0.001$ und somit ist der Zusammenhang signifikant zum $5\%$ Niveau.
+
+Für ein Auto mit $98$PS würden man anhand des Modells $`r round(val, 2)`$ an mpg erwarten.
+
+```{r}
+logval = abs(t(b) %*% c(0, 20))
+```
+
+Der logarithmierte Verbrauch unterscheidet sich für 20PS erwartungsgemäß um $`r logval`$.
+
+
+```{r}
+X_log <- matrix(NA, nrow = nrow(Auto), ncol = 2)
+X_log[,1] <- rep(1, nrow(Auto))
+X_log[,2] <- log(Auto$horsepower)
+XTX_log <- solve(t(X_log)%*%X_log)
+b_hat_log <- XTX_log%*%t(X_log)%*%log(Auto$mpg)
+b_hat_log[2,]
+
+n <- nrow(Auto)
+p <- 3
+beta <- b[2,]
+sig_hat <- sd(log(Auto$mpg))
+
+test <- beta/(sig_hat*sqrt(XTX[2,2]))
+test
+
+t_value <-  qt(c(0.025, 0.975), df=n-p)
+
+if (t_value[1] < test & test < t_value[2]){
+  print('H0 wird nicht verworfen!') 
+} else {
+  print('H0 wird verworfen!')
+}
+
+mpg98 <- exp(b_hat[1,] + b_hat[2,]*98)
+mpg98
+
+diff_20 <- abs(20*b_hat[2,])
+diff_20
+
+y_hat <- c()
+for(i in 1:nrow(Auto)){
+  y_hat[i] <- (b_hat[1,] + b_hat[2,]*Auto$horsepower[i])
+}
+
+eps <- log(Auto$mpg) - y_hat
+qqnorm(eps)
+qqline(eps)
+
+hist(eps)
+
+
+shapiro.test(eps)
+```
+
+Laut Shapiro-Wilk-Test wird H0 ("Die Residuen sind normalverteilt.") nicht verworfen.
+Wir können von einer Normalverteilung ausgehen. Die Plots bestätigen unsere Vermutung. 
+
+## c)
+
+### A)
+
+```{r}
+# preds
+x1 = Auto$horsepower
+x2 = Auto$year
+x3 = as.factor(Auto$year)
+y = log(Auto$mpg)
+# manual linear regression
+X = matrix(
+  c(
+    rep(1, nrow(Auto)),
+    x1,
+    x2,
+    x3
+  ),
+  nrow = nrow(Auto), 
+  ncol = 4
+)
+XTX = t(X) %*% X
+iXTX = ginv(XTX)
+b = iXTX %*% t(X) %*% y
+# anova
+fit = aov(y~x1+x2+x3)
+summary(fit)
+```
+
+Nach anova haben PS, Jahr und Ursprungsland jeweils ein $p < 0.001$ und weisen somit einen statistisch signifikanten Zusammenhang mit der Zielvariable auf.
+
+### B)
+
+```{r}
+# preds
+x1 = Auto$cylinders
+x2 = Auto$displacement
+x3 = Auto$horsepower
+x4 = Auto$weight
+x5 = Auto$acceleration
+x6 = Auto$year
+x7 = as.factor(Auto$year)
+y = log(Auto$mpg)
+# manual linear regression
+X = matrix(
+  c(
+    rep(1, nrow(Auto)),
+    x1,
+    x2,
+    x3,
+    x4,
+    x5,
+    x6,
+    x7
+  ),
+  nrow = nrow(Auto), 
+  ncol = ncol(Auto) + 1
+)
+XTX = t(X) %*% X
+iXTX = ginv(XTX)
+b = iXTX %*% t(X) %*% y
+# anova
+fit = aov(y~x1+x2+x3+x4+x5+x6+x7)
+summary(fit)
+```
