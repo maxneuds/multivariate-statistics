@@ -51,13 +51,12 @@ set.seed(42)
 # Aufgabe 2)
 ```{r}
 library("ISLR")
-
-model_mpg <- lm(Auto$mpg~Auto$horsepower+Auto$year+Auto$origin)
+model_mpg <- lm(mpg~horsepower+year+origin, data = Auto)
 plot(model_mpg)
 ```
 
 ```{r}
-model_log_mpg <- lm(log(Auto$mpg)~Auto$horsepower+Auto$year+Auto$origin)
+model_log_mpg <- lm(log(mpg)~horsepower+year+origin, data = Auto)
 plot(model_log_mpg)
 ```
 
@@ -99,17 +98,63 @@ Hier wird deutlich, dass der Punkt 116 ein Extremfall in unserem Datensatz ist.
 
 ```{r}
 library(leaps)
-regfit.full = regsubsets(log(Auto$mpg)~Auto$cylinders+Auto$displacement+Auto$horsepower+Auto$weight+Auto$acceleration+Auto$year+Auto$origin, data=Auto)
+regfit.full = regsubsets(log(mpg)~cylinders+displacement+horsepower+weight+acceleration+year+origin, data=Auto)
 reg.summary = summary(regfit.full)
 ```
 
 ```{r}
 plot(reg.summary$bic, xlab="Number of Variables", ylab="BIC", type="l") 
 plot(reg.summary$cp, xlab="Number of Variables", ylab="AIC", type="l")
-plot(reg.summary$adjr2, xlab="Number of Variables", ylab="Adjusted RSq", type="l")
+plot(reg.summary$rsq, xlab="Number of Variables", ylab="RSq", type="l")
 ```
+BIC:
+
+- BIC wird für das Modell mit nur 4 Kovariaten minimal.
+
+AIC:
+
+- Nach AIC ist die Entscheidungsfindung nicht ganz so eindeutig. Auch hier ist bei 4 Kovariaten der AIC sehr gering, jedoch steigt der AIC bei wachsender Anzahl an Kovariaten nicht mehr an, sinkt aber auch nicht deutlich weiter. 
+
+$R^2:$
+
+- Ein hohes $R^2$ spricht für ein gutes Modell. Allerdings gibt es, anders als bei AIC und BIC, keinen Strafterm, welcher die Anzahl an Kovariaten "bestraft". Deshalb steigt das $R^2$ mit Anzahl dr Kovariaten (leicht) an.
+
+
 Wir würden uns für ein Modell mit 4 Kovariaten entscheiden, da dort BIC und AIC sehr klein sind und $R^2$ groß ist. 
 
 ```{r}
 coef(regfit.full, 4)
 ```
+
+## d)
+
+```{r}
+library(car)
+
+model_all_log <- lm(log(mpg)~cylinders+displacement+horsepower+weight+acceleration+year+origin, data=Auto)
+
+model_4_log <- lm(log(mpg)~horsepower+weight+year+origin, data=Auto)
+vif(model_all_log)
+cat("\n")
+vif(model_4_log)
+```
+
+Schaut man sich die VIF-Werte an, wird deutlich, dass im Modell mit allen Kovariaten definitiv Multikollinearität ein Problem darstellt.
+
+Im Modell, dass wir durch die Subset-Selektion gefunden haben, sind die VIF-Werte geringer. "Pi-Mal-Daumen" ist die Faustregel:
+
+- 1 = unkorreliert
+
+- zwischen 1 und 5 = moderat korreliert
+
+- größer 5 = stark korreliert
+
+Die VIF-Werte für horsepower und weight liegen beide bei circa 5. Nimmt man nun die Kovariate mit dem höchsten VIF-Wert aus dem Modell heraus, ergeben sich folgende VIF-Werte für das neue Modell:
+
+```{r}
+model_3_log <- lm(log(mpg)~horsepower+year+origin, data=Auto)
+vif(model_3_log)
+```
+
+Eindeutig wird der Einfluss von weight durch horsepower bereits gut "erklärt". Die VIF-Werte liegen nun im annehmbaren Bereich. Das Modell mit horsepower, year und origin scheint das robustere zu sein. 
+
