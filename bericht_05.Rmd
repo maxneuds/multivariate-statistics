@@ -46,10 +46,10 @@ knitr::opts_chunk$set(error=TRUE,     # Keep compiling upon error
 
 <!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
 
-set.seed(42)
-
 # Aufgabe 2)
 ```{r}
+set.seed(42)
+
 library("ISLR")
 model_mpg <- lm(mpg~horsepower+year+origin, data = Auto)
 plot(model_mpg)
