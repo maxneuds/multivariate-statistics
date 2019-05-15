@@ -15,6 +15,10 @@ header-includes:
 - \fancyhead[R]{}
 - \fancyfoot[C,C]{\thepage}
 - \renewcommand{\footrulewidth}{0.4pt}
+- \newcommand{\cov}{\operatorname{Cov}}
+- \newcommand{\cor}{\operatorname{Cor}}
+- \newcommand{\V}{\mathbf{\operatorname{V}}}
+- \newcommand{\E}{\mathbf{\operatorname{E}}}
 ---
 
 <style type="text/css">
@@ -46,10 +50,78 @@ knitr::opts_chunk$set(error=TRUE,     # Keep compiling upon error
 
 <!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
 
-# Aufgabe 2)
 ```{r}
 set.seed(42)
+```
 
+# Arbeitsblatt 5
+
+## Aufgabe 1
+
+Erinnerung. Wir nehmen die Gauss-Markov-Annahmen an (Fehlerterme haben Erwartungswert 0, gleiche Varianz und sind unkorreliert) und folglich gilt:
+
+\begin{align*}
+& \cov(\epsilon_i, \epsilon_j) = 0 \quad \forall i \neq j \\
+& \E(\epsilon_i) = \theta\\
+& \V(\epsilon_i) = \sigma^2\\
+& Y_i = X_i b + \epsilon_i\\
+& \hat Y_i = (X \hat b)_i\\
+& \hat b = (X^T X)^{-1} X^T Y\\
+& \hat b_i = \left((X^T X)^{-1} X^T Y\right)_i\\
+& H = X (X^T X)^{-1} X^T\\
+& H = H \cdot H\\
+& H = H^T
+\end{align*}
+
+$X_i$ ist hier eine Zeile der Designmatrix und $H_i$ eine Zeile der Hatmatrix.
+
+Zuerst stellen wir fest, dass $X_i b$ und $\epsilon_i$ unabhängig voneinander sind und $X_i b$ varianzlos ist. Dann erhalten wir
+
+\begin{align*}
+\V(Y_i) = \V(X_i b + \epsilon_i) = \V(X_i b) + \V(\epsilon_i) = \sigma^2.
+\end{align*}
+
+Ferner können wir berechnen
+
+\begin{align*}
+\V (Y_i)
+& = \V((X \hat b)_i )
+= \V((H Y)_i)
+= H_i \V(Y) H_i^T
+= H_i \V(X b + \epsilon) H_i^T \\
+& = H_i \operatorname{diag}(\sigma^2) H_i^T 
+= h_{ii} \sigma^2.
+\end{align*}
+
+Ähnlich können wir berechnen
+
+\begin{align*}
+\cov(Y_i, \hat Y_i)
+& = \cov(Y_i, H_i Y) \\
+& = H_i \cov(x_i b + \epsilon_i, (X b + \epsilon)_i) H_i^T \\
+& = h_{ii} \sigma^2.
+\end{align*}
+
+Und schließ durch Einsetzen erhalten wir
+
+\begin{align*}
+\cor(Y_i, \hat Y_i)
+& = \frac{
+  \cov(Y_i, \hat Y_i)
+}{
+  \sqrt{\V(Y_i) \V(\hat Y_i)}
+} \\
+& = \frac{
+  h_{ii} \sigma^2
+}{
+  \sqrt{\sigma^2 h_{ii} \sigma^2}
+} \\
+& = \sqrt{h_{ii}}.
+\end{align*}
+
+## Aufgabe 2
+
+```{r}
 library("ISLR")
 model_mpg <- lm(mpg~horsepower+year+origin, data = Auto)
 plot(model_mpg)
@@ -60,7 +132,7 @@ model_log_mpg <- lm(log(mpg)~horsepower+year+origin, data = Auto)
 plot(model_log_mpg)
 ```
 
-## a)
+### a)
 
 Wenn wir uns die Grafik "Residuals vs Fitted" ansehen, sehen wir, dass die Daten kein offensichtliches, eindeutiges Muster haben. Obwohl die Kurven leicht gewölbt sind, haben sie gleichmäßige Residuen um die horizontale Linie herum verteilt, ohne ein ausgeprägtes Muster.
 Dies ist ein guter Hinweis darauf, dass es sich nicht um eine nichtlineare Beziehung handelt.
@@ -81,7 +153,7 @@ In beiden Modellen gibt es keine offensichtlichen Ausreißer (laut Cook's Distan
 
 Abschließend würden wir das log(mpg)-Modell bevorzugen, obwohl es kaum Unterschiede in den Residuen gibt. Alleine der Q-Q-Plot des log(mpg)-Modells deutet auf eine bessere Anpassung der Residuen auf die Normalverteilung hin als im mpg-Modell.
 
-## b)
+### b)
 
 Der Punkt 116 ist in beiden Modellen des Öfteren markiert. Schauen wir uns diesen näher an:
 
@@ -94,7 +166,7 @@ summary
 
 Hier wird deutlich, dass der Punkt 116 ein Extremfall in unserem Datensatz ist.
 
-## c)
+### c)
 
 ```{r}
 library(leaps)
@@ -126,7 +198,7 @@ Wir würden uns für ein Modell mit 4 Kovariaten entscheiden, da dort BIC und AI
 coef(regfit.full, 4)
 ```
 
-## d)
+### d)
 
 ```{r}
 library(car)
