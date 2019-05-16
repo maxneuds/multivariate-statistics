@@ -73,11 +73,11 @@ Erinnerung. Wir nehmen die Gauss-Markov-Annahmen an (Fehlerterme haben Erwartung
 & H = H^T
 \end{align*}
 $X_i$ ist hier eine Zeile der Designmatrix und $H_i$ eine Zeile der Hatmatrix.
-Zuerst stellen wir fest, dass $X_i b$ und $\epsilon_i$ unabh?ngig voneinander sind und $X_i b$ varianzlos ist. Dann erhalten wir
+Zuerst stellen wir fest, dass $X_i b$ und $\epsilon_i$ unabhängig voneinander sind und $X_i b$ varianzlos ist. Dann erhalten wir
 \begin{align*}
 \V(Y_i) = \V(X_i b + \epsilon_i) = \V(X_i b) + \V(\epsilon_i) = \sigma^2.
 \end{align*}
-Ferner k?nnen wir berechnen
+Ferner können wir berechnen
 \begin{align*}
 \V (\hat Y_i)
 & = \V((X \hat b)_i )
@@ -88,7 +88,7 @@ Ferner k?nnen wir berechnen
 = h_{ii} \sigma^2.
 \end{align*}
 
-?hnlich k?nnen wir berechnen
+Ähnlich können wir berechnen
 
 \begin{align*}
 \cov(Y_i, \hat Y_i)
@@ -97,7 +97,7 @@ Ferner k?nnen wir berechnen
 & = h_{ii} \sigma^2.
 \end{align*}
 
-Und schlie?lich erhalten wir durch Einsetzen 
+Und schließlich erhalten wir durch Einsetzen 
 
 \begin{align*}
 \cor(Y_i, \hat Y_i)
@@ -129,28 +129,28 @@ plot(model_log_mpg)
 
 ### a)
 
-Wenn wir uns die Grafik "Residuals vs Fitted" ansehen, sehen wir, dass die Daten kein offensichtliches, eindeutiges Muster haben. Obwohl die Kurven leicht gew?lbt sind, haben sie gleichm??ige Residuen um die horizontale Linie herum verteilt, ohne ein ausgepr?gtes Muster.
+Wenn wir uns die Grafik "Residuals vs Fitted" ansehen, sehen wir, dass die Daten kein offensichtliches, eindeutiges Muster haben. Obwohl die Kurven leicht gewölbt sind, haben sie gleichmäßige Residuen um die horizontale Linie herum verteilt, ohne ein ausgeprägtes Muster.
 Dies ist ein guter Hinweis darauf, dass es sich nicht um eine nichtlineare Beziehung handelt.
 
-Die Residuen sollten normalverteilt sein, und der Q-Q Plot ist ein gutes Instrument, um dies zu ?berpr?fen. F?r beide Modelle zeigt der Q-Q-Plot eine ziemlich gute Anpassung auf die Linie. Nach oben hin weichen die Punkte f?r das mpg-Modell deutlicher von der Linie ab, als im log(mpg)-Modell. 
+Die Residuen sollten normalverteilt sein, und der Q-Q Plot ist ein gutes Instrument, um dies zu überprüfen. Für beide Modelle zeigt der Q-Q-Plot eine ziemlich gute Anpassung auf die Linie. Nach oben hin weichen die Punkte für das mpg-Modell deutlicher von der Linie ab, als im log(mpg)-Modell. 
 
-Die "Scale-Location"-Plots testen die lineare Regressionsannahme der gleichen Varianz (Homoscedastizit?t), d.h. dass die Residuen die gleiche Varianz entlang der Regressionslinie aufweisen.
+Die "Scale-Location"-Plots testen die lineare Regressionsannahme der gleichen Varianz (Homoscedastizität), d.h. dass die Residuen die gleiche Varianz entlang der Regressionslinie aufweisen.
 
-In unseren beiden Modellen sind die Residuen relativ gut ?ber und unter einer ziemlich horizontalen Linie verteilt.
+In unseren beiden Modellen sind die Residuen relativ gut über und unter einer ziemlich horizontalen Linie verteilt.
 
-Die "Residuals vs Leverage"-Plots k?nnen verwendet werden, um einflussreiche Datenpunkte im Datensatz zu finden. Ein einflussreicher Datenpunkt ist einer, der, wenn er entfernt wird, das Modell beeinflusst, so dass seine Einbeziehung oder sein Ausschluss in Betracht gezogen werden sollte.
+Die "Residuals vs Leverage"-Plots können verwendet werden, um einflussreiche Datenpunkte im Datensatz zu finden. Ein einflussreicher Datenpunkt ist einer, der, wenn er entfernt wird, das Modell beeinflusst, so dass seine Einbeziehung oder sein Ausschluss in Betracht gezogen werden sollte.
 
-Ein einflussreicher Datenpunkt kann ein Ausrei?er sein oder auch nicht, und der Zweck dieser Grafik ist es, F?lle zu identifizieren, die einen hohen Einfluss auf das Modell haben. Ausrei?er neigen dazu, Leverage und damit Einfluss auf das Modell auszu?ben.
+Ein einflussreicher Datenpunkt kann ein Ausreißer sein oder auch nicht, und der Zweck dieser Grafik ist es, Fälle zu identifizieren, die einen hohen Einfluss auf das Modell haben. Ausreißer neigen dazu, Leverage und damit Einfluss auf das Modell auszuüben.
 
 Ein einflussreicher Fall erscheint oben rechts oder unten links in der Grafik innerhalb einer roten Linie, die Cook's Distance markiert. 
 
-In beiden Modellen gibt es keine offensichtlichen Ausrei?er (laut Cook's Distance).
+In beiden Modellen gibt es keine offensichtlichen Ausreißer (laut Cook's Distance).
 
-Abschlie?end w?rden wir das log(mpg)-Modell bevorzugen, obwohl es kaum Unterschiede in den Residuen gibt. Alleine der Q-Q-Plot des log(mpg)-Modells deutet auf eine bessere Anpassung der Residuen auf die Normalverteilung hin als im mpg-Modell.
+Abschließend würden wir das log(mpg)-Modell bevorzugen, obwohl es kaum Unterschiede in den Residuen gibt. Alleine der Q-Q-Plot des log(mpg)-Modells deutet auf eine bessere Anpassung der Residuen auf die Normalverteilung hin als im mpg-Modell.
 
 ### b)
 
-Der Punkt 116 ist in beiden Modellen des ?fteren markiert. Schauen wir uns diesen n?her an:
+Der Punkt 116 ist in beiden Modellen des Öfteren markiert. Schauen wir uns diesen näher an:
 
 ```{r}
 pt_116 <- Auto[116,]
@@ -177,7 +177,7 @@ plot(reg.summary$rsq, xlab="Number of Variables", ylab="RSq", type="l")
 ```
 BIC:
 
-- BIC wird f?r das Modell mit nur 4 Kovariaten minimal.
+- BIC wird für das Modell mit nur 4 Kovariaten minimal.
 
 AIC:
 
@@ -185,10 +185,10 @@ AIC:
 
 $R^2:$
 
-- Ein hohes $R^2$ spricht f?r ein gutes Modell. Allerdings gibt es, anders als bei AIC und BIC, keinen Strafterm, welcher die Anzahl an Kovariaten "bestraft". Deshalb steigt das $R^2$ mit Anzahl der Kovariaten (leicht) an.
+- Ein hohes $R^2$ spricht für ein gutes Modell. Allerdings gibt es, anders als bei AIC und BIC, keinen Strafterm, welcher die Anzahl an Kovariaten "bestraft". Deshalb steigt das $R^2$ mit Anzahl der Kovariaten (leicht) an.
 
 
-Wir w?rden uns f?r ein Modell mit 4 Kovariaten entscheiden, da dort BIC und AIC sehr klein sind und $R^2$ gro? ist. 
+Wir würden uns für ein Modell mit 4 Kovariaten entscheiden, da dort BIC und AIC sehr klein sind und $R^2$ groß ist. 
 
 ```{r}
 coef(regfit.full, 4)
@@ -207,7 +207,7 @@ cat("\n")
 vif(model_4_log)
 ```
 
-Schaut man sich die VIF-Werte an, wird deutlich, dass im Modell mit allen Kovariaten definitiv Multikollinearit?t ein Problem darstellt.
+Schaut man sich die VIF-Werte an, wird deutlich, dass im Modell mit allen Kovariaten definitiv Multikollinearität ein Problem darstellt.
 
 Im Modell, dass wir durch die Subset-Selektion gefunden haben, sind die VIF-Werte geringer. "Pi-Mal-Daumen" ist die Faustregel:
 
@@ -215,9 +215,9 @@ Im Modell, dass wir durch die Subset-Selektion gefunden haben, sind die VIF-Wert
 
 - zwischen 1 und 5 = moderat korreliert
 
-- gr??er 5 = stark korreliert
+- größer 5 = stark korreliert
 
-Die VIF-Werte f?r horsepower und weight liegen beide bei circa 5. Nimmt man nun die Kovariate mit dem h?chsten VIF-Wert aus dem Modell heraus, ergeben sich folgende VIF-Werte f?r das neue Modell:
+Die VIF-Werte für horsepower und weight liegen beide bei circa 5. Nimmt man nun die Kovariate mit dem höchsten VIF-Wert aus dem Modell heraus, ergeben sich folgende VIF-Werte für das neue Modell:
 
 
 ```{r}
@@ -225,7 +225,7 @@ model_3_log <- lm(log(mpg)~horsepower+year+origin, data=Auto)
 vif(model_3_log)
 ```
 
-Eindeutig wird der Einfluss von weight durch horsepower bereits gut "erkl?rt". Die VIF-Werte liegen nun im annehmbaren Bereich. Das Modell mit horsepower, year und origin scheint das robustere zu sein. 
+Eindeutig wird der Einfluss von weight durch horsepower bereits gut "erklärt". Die VIF-Werte liegen nun im annehmbaren Bereich. Das Modell mit horsepower, year und origin scheint das robustere zu sein. 
 
 \newpage
 ## Aufgabe 3
@@ -237,9 +237,9 @@ Likelihood-Ratio-Test:
 &nbsp;
 &nbsp;
 
-Sch?tzstatistik: 
+Schätzstatistik: 
 
-$T = 2\cdot(LL_M2 - LL_M1) \sim_{H0} \chi^2_q \quad$, q = Anzahl zus?tzlicher Parameter im komplexeren Modell
+$T = 2\cdot(LL_M2 - LL_M1) \sim_{H0} \chi^2_q \quad$, q = Anzahl zusätzlicher Parameter im komplexeren Modell
 
 Hier: 
 
