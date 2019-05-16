@@ -10,7 +10,7 @@ header-includes:
 - \usepackage{floatrow}
 - \usepackage{fancyhdr}
 - \pagestyle{fancy}
-- '\fancyhead[C,C]{Gruppe 5: Robin Baudisch, Merlin Kopfmann, Maximilian Neudert}'
+- '\fancyhead[C,C]{Gruppe 11: Robin Baudisch, Merlin Kopfmann, Maximilian Neudert}'
 - \fancyhead[L]{}
 - \fancyhead[R]{}
 - \fancyfoot[C,C]{\thepage}
