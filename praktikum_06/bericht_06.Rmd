@@ -82,7 +82,7 @@ summary(linreg)
 AIC(linreg_log, linreg)
 ```
 
-Das Modell mit logarithmierten Kovariaten gleason, pgg45 und cavol und abhängiger Variable log(psa) ist deutlich besser als das Modell ohne Variablentransformation. Dies lässt sich zum einen am R^2-Wert ablesen, als auch über den AIC-Vergleich feststellen. 
+Das Modell mit logarithmierten Kovariaten gleason, pgg45 und cavol und abhÃ¤ngiger Variable log(psa) ist deutlich besser als das Modell ohne Variablentransformation. Dies lÃ¤sst sich zum einen am R^2-Wert ablesen, als auch Ã¼ber den AIC-Vergleich feststellen. 
 
 ### b)
 ```{r}
@@ -108,7 +108,7 @@ coef(regfit.full, 3)
 ```
 
 Laut StepAIC ist das Modell "log(psa) ~ svi + pgg45log + cavollog" das Beste (Sowohl backward als auch forward).
-variablenselektion durch Regsubsets ist nicht eindeutig. Laut BIC ist das Modell mit 2 Kovariaten das Beste, AIC und $R^2$ sprechen für das Modell mit 3 Kovariaten. Dieses ist das Gleiche, wie im StepAIC. Wir entscheiden uns deshalb für dieses Modell. 
+variablenselektion durch Regsubsets ist nicht eindeutig. Laut BIC ist das Modell mit 2 Kovariaten das Beste, AIC und $R^2$ sprechen fÃ¼r das Modell mit 3 Kovariaten. Dieses ist das Gleiche, wie im StepAIC. Wir entscheiden uns deshalb fÃ¼r dieses Modell. 
 
 ### c)
 ```{r}
@@ -119,7 +119,7 @@ plot(linreg_final)
 
 ## Aufgabe 2
 
-Wir kÃ¶nnen die Unkorreliertheit einerseits beweisen durch
+Wir kÃƒÂ¶nnen die Unkorreliertheit einerseits beweisen durch
 
 \begin{align}
 \cov{Y_i, Y_j}
