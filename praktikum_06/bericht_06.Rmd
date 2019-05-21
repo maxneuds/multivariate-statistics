@@ -79,7 +79,7 @@ linreg_log <- lm(log(psa) ~ age+svi+log(gleason)+pgg45log+cavollog, data = prost
 linreg <- lm(psa ~ age+svi+gleason+pgg45+cavol, data = prostate)
 summary(linreg_log)
 summary(linreg)
-AIC(linreg_log, linreg, linreg_log2)
+AIC(linreg_log, linreg)
 ```
 
 Das Modell mit logarithmierten Kovariaten gleason, pgg45 und cavol und abhängiger Variable log(psa) ist deutlich besser als das Modell ohne Variablentransformation. Dies lässt sich zum einen am R^2-Wert ablesen, als auch über den AIC-Vergleich feststellen. 
@@ -88,13 +88,33 @@ Das Modell mit logarithmierten Kovariaten gleason, pgg45 und cavol und abhängige
 ```{r}
 library("MASS")
 library("leaps")
+
+cat("Modellvergleich: StepAIC Backward & StepAIC Forward:")
+cat("\n")
 stepAIC(linreg_log, direction = "backward")
 linreg_forward <- lm(log(psa) ~ 1, data = prostate)
 stepAIC(linreg_forward, direction = "forward", scope=list(upper=linreg_log,lower=linreg_forward))
 
 regfit.full <- regsubsets(log(psa) ~ age+svi+log(gleason)+pgg45log+cavollog, data = prostate)
 reg.summary <- summary(regfit.full)
-plot(reg.summary$rsq)
+
+plot(reg.summary$rsq, type='l', xlab="Number of Variables", ylab="R-Squared")
+plot(reg.summary$cp, type='l', xlab="Number of Variables", ylab="AIC")
+plot(reg.summary$bic, type='l', xlab="Number of Variables", ylab="BIC")
+
+cat("Bestes Modell laut regsubsets:")
+cat("\n")
+coef(regfit.full, 3)
+```
+
+Laut StepAIC ist das Modell "log(psa) ~ svi + pgg45log + cavollog" das Beste (Sowohl backward als auch forward).
+variablenselektion durch Regsubsets ist nicht eindeutig. Laut BIC ist das Modell mit 2 Kovariaten das Beste, AIC und $R^2$ sprechen für das Modell mit 3 Kovariaten. Dieses ist das Gleiche, wie im StepAIC. Wir entscheiden uns deshalb für dieses Modell. 
+
+### c)
+```{r}
+linreg_final <- lm(log(psa) ~ svi + pgg45log + cavollog, data=prostate)
+plot(linreg)
+plot(linreg_final)
 ```
 
 ## Aufgabe 2
