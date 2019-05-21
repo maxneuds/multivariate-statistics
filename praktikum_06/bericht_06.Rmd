@@ -56,6 +56,47 @@ set.seed(42)
 
 # Arbeitsblatt 6
 
+## Aufgabe 1
+
+### a)
+```{r}
+load("prostate.RData")
+
+hist(prostate$age)
+hist(prostate$svi)
+hist(prostate$gleason)
+hist(prostate$pgg45)
+hist(prostate$psa)
+hist(prostate$cavol)
+
+
+prostate$pgg45log <- log(prostate$pgg45)
+prostate$pgg45log[is.infinite(prostate$pgg45log)] <- -exp(99)
+prostate$cavollog <- log(prostate$cavol)
+prostate$cavollog[is.infinite(prostate$cavollog)] <- -exp(99)
+
+linreg_log <- lm(log(psa) ~ age+svi+log(gleason)+pgg45log+cavollog, data = prostate)
+linreg <- lm(psa ~ age+svi+gleason+pgg45+cavol, data = prostate)
+summary(linreg_log)
+summary(linreg)
+AIC(linreg_log, linreg, linreg_log2)
+```
+
+Das Modell mit logarithmierten Kovariaten gleason, pgg45 und cavol und abhängiger Variable log(psa) ist deutlich besser als das Modell ohne Variablentransformation. Dies lässt sich zum einen am R^2-Wert ablesen, als auch über den AIC-Vergleich feststellen. 
+
+### b)
+```{r}
+library("MASS")
+library("leaps")
+stepAIC(linreg_log, direction = "backward")
+linreg_forward <- lm(log(psa) ~ 1, data = prostate)
+stepAIC(linreg_forward, direction = "forward", scope=list(upper=linreg_log,lower=linreg_forward))
+
+regfit.full <- regsubsets(log(psa) ~ age+svi+log(gleason)+pgg45log+cavollog, data = prostate)
+reg.summary <- summary(regfit.full)
+plot(reg.summary$rsq)
+```
+
 ## Aufgabe 2
 
 Wir kÃ¶nnen die Unkorreliertheit einerseits beweisen durch
