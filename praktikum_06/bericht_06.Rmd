@@ -148,7 +148,7 @@ Sei $e_i$ der $i$-te Einheitsvektor, dann erhalten wir:
 & = e_i^T A^T \Sigma A e_j \\
 & = e_i^T \Lambda e_j \\
 & = \Lambda_i e_j \\
-& = \Lambda_{ij}
+& = \Lambda_{ij}\\
 & = \begin{cases}
 1, & i = j,\\
 0, & \text{sonst}.
