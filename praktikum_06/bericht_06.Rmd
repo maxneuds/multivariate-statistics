@@ -117,9 +117,11 @@ plot(linreg)
 plot(linreg_final)
 ```
 
+\cleardoublepage
+
 ## Aufgabe 2
 
-Wir kÃ¶nnen die Unkorreliertheit einerseits beweisen durch
+Wir können die Unkorreliertheit einerseits beweisen durch
 
 \begin{align}
 \cov{Y_i, Y_j}
@@ -153,12 +155,59 @@ Sei $e_i$ der $i$-te Einheitsvektor, dann erhalten wir:
 \end{cases}
 \end{align}
 
+\cleardoublepage
 
+## Aufgabe 3
 
+```{r}
+data = read.csv('framingham.csv', sep=';')
+df = data.frame(data)
+```
 
+### a)
 
+Einmal der gesamte Datensatz.
 
+```{r}
+library(ggplot2)
+library(tidyr)
+ggdf = gather(df, key='key', value='value', c(3,4,5,6,7,8,9,10))
+gg = ggplot(
+  data = ggdf,
+  mapping = aes(
+    x = ID,
+    y = value,
+    color = key
+  )
+)
+gg = gg + geom_point()
+gg
+```
 
+Nun beschränkt auf `DBP` als $X_1$ und `SBP` als $X_2$.
+
+```{r}
+df = data.frame(DBP = df$DBP, SBP = df$SBP)
+ggdf = gather(df, key='key', value='value')
+gg = ggplot(
+  data = df,
+  mapping = aes(
+    x = DBP,
+    y = SBP
+  )
+)
+gg = gg + geom_point()
+gg
+```
+
+```{r}
+x1 = df$DBP
+x2 = df$SBP
+sol = round(cor(x1, x2), 3)
+sol
+```
+
+Wir erhalten eine Korrelation von $`r sol`$ und somit sind DBP und SBP positiv korreliert.
 
 
 
