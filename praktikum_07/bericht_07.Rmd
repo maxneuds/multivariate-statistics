@@ -73,6 +73,77 @@ Sprich in diesem Beispiel erklärt die erste Hauptkomponente als Linearkombinati
 
 ## Aufgabe 2
 
+```{r}
+# create matrix
+data = c(
+  1, 0.2, 0.3, 0.4, .4, 0.05,
+  0.2, 1, 0.45, .3, .15, .2,
+  .3, .45, 1, .1, .2, .4,
+  .4, .3, .1, 1, .15, .4,
+  .4, .15, .2, .15, 1, .05,
+  .05, .2, .4, .4, .05, 1
+)
+K = matrix(
+  nrow=6,
+  ncol=6,
+  data = data
+)
+
+# calculate eigenvectors, eigenvalues
+eig = eigen(K)
+
+# norm to exercise
+vmat = round(eig$vectors, 2)
+v1 = vmat[,1]
+v2 = vmat[,2]
+v3 = vmat[,3]
+v4 = vmat[,4]
+v5 = vmat[,5]
+v6 = vmat[,6]
+lmat = eig$values
+l1 = lmat[1]
+l2 = lmat[2]
+l3 = lmat[3]
+l4 = lmat[4]
+l5 = lmat[5]
+l6 = lmat[6]
+
+# data
+X = c(2,1,8,6,0,7)
+
+# PCA
+# calculate <X, v>
+pca = X %*% vmat
+pcavec = pca[1,]
+```
+
+Wir erhalten als Hauptkomponenten für $X$: `r pcavec`
+
+```{r}
+lsum = sum(lmat)
+p1 = round(l1/lsum, 2)
+p2 = round(l2/lsum, 2)
+```
+
+Die erste Hauptkomponente erklärt $`r p1`$ und die zweite $`r p2`$ der Varianz.
+
+Der Scree Plot ist ein Scatterplot der geordneten Eigenwerte.
+
+```{r}
+packageTest('ggplot2')
+data = data.frame(lmat/sum(lmat))
+gg = ggplot(
+  data = data,
+  mapping = aes(
+    x = seq(6),
+    y = data$lmat
+  )
+)
+gg = gg + xlab('Hauptkomponente')
+gg = gg + ylab('Erklärte Varianz')
+gg + geom_point() + geom_line()
+```
+
 
 ## Aufgabe 3
 ### a)
