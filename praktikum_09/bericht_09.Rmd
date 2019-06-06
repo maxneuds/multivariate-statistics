@@ -65,3 +65,26 @@ set.seed(42)
 
 ## Aufgabe 1
 
+
+## Aufgabe 2
+
+```{r}
+load("diab.RData")
+head(diab)
+
+log_reg <- glm(diabetes~pgc+bmi, family=binomial(link='logit'), data=diab)
+
+pred = predict.glm(log_reg, data.frame(pgc=120, bmi=27), type="response")[1]
+pred = as.vector(pred)
+
+logit = function(L) {
+  return(1/2*(1+tanh(L/2)))
+}
+
+pred2 = as.vector(logit(log_reg$coefficients[1]+log_reg$coefficients[2]*120+log_reg$coefficients[3]*27))
+delta = round((pred - pred2)^2, 4)
+delta
+```
+
+
+## Aufgabe 3
