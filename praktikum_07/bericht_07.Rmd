@@ -1,0 +1,195 @@
+---
+output: pdf_document
+header-includes: 
+- \usepackage[utf8]{inputenc}
+- \usepackage[T1]{fontenc}
+- \usepackage[ngerman]{babel}
+- \usepackage{amsmath,amssymb,amsthm}
+- \usepackage{dsfont}
+- \usepackage{listings}
+- \usepackage{floatrow}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- '\fancyhead[C,C]{Gruppe 11: Robin Baudisch, Merlin Kopfmann, Maximilian Neudert}'
+- \fancyhead[L]{}
+- \fancyhead[R]{}
+- \fancyfoot[C,C]{\thepage}
+- \renewcommand{\footrulewidth}{0.4pt}
+- '\newcommand{\cov}[1]{\operatorname{Cov}\left( #1 \right)}'
+- '\newcommand{\cor}[1]{\operatorname{Cor}\left( #1 \right)}'
+- '\newcommand{\V}[1]{\mathbf{\operatorname{V}}\left( #1 \right)}'
+- '\newcommand{\E}[1]{\mathbf{\operatorname{E}}\left( #1 \right)}'
+---
+
+<style type="text/css">
+body{
+  font-size: 12px;
+}
+h1 {
+  font-size: 18px;
+}
+h1 {
+  font-size: 14px;
+}
+h1 {
+  font-size: 12px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(error=TRUE,     # Keep compiling upon error
+                      collapse=TRUE,  # collapse by default
+                      echo=TRUE,      # echo code by default
+                      comment = "#>", # change comment character
+                      warning=TRUE,   # show R warnings
+                      message=FALSE,  # show R messages
+                      out.width = "100%",
+                      out.height = "100%",
+                      fig.width = 10)
+
+packageTest<- function(x)  {
+    if (!require(x,character.only = TRUE))  {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+}
+```
+
+<!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
+
+```{r}
+set.seed(42)
+```
+
+# Arbeitsblatt 7
+
+## Aufgabe 1
+
+Wir haben 100 Personen mit jeweils 1000 Features.
+Die Hauptkomponenten sind Linearkombinationen der Features, um neue Featurevektoren zu bestimmen. Wenn man versucht möglichst hohe Varianz zu erzielen, dann bieten sich orthogonal zueinander stehende Vektoren an, da dies die maximal mögliche Abweichung ist. Das einzige Vektorsystem einer Matrix, das orthogonal aufeinander steht sind die Eigenvektoren der Matrix, welche dann als Hauptkomponenten (anhand der Kovarianzmatrix) gewählt werden und anschließend nach Eigenwert absteigend sortiert werden.
+Je größer der Eigenwert, desto größer die erklärte Varianz.
+
+Sprich in diesem Beispiel erklärt die erste Hauptkomponente als Linearkombination aus 1000 Featurevektoren alleine schon 10% der Variation.
+
+## Aufgabe 2
+
+
+## Aufgabe 3
+### a)
+```{r}
+packageTest('datasets')
+data <- USArrests
+head(data)
+```
+
+
+### Laut Doku:
+
+
+Dieser Datensatz enthält Statistiken, in Festnahmen pro 100.000 Einwohner, wegen Körperverletzung, Mord und Vergewaltigung in jedem der 50 US-Bundesstaaten für das Jahr 1973. Ebenfalls angegeben ist der Prozentsatz der Bevölkerung, der in städtischen Gebieten lebt.
+
+#### Format:
+
+
+Ein Dataframe mit 50 Beobachtungen und 4 Variablen.
+
+[,1] Murder (numerisch):  Mord Verhaftungen (pro 100.000)
+
+[,2] Assault (numerisch): Verhaftungen wegen Körperverletzung (pro 100.000)
+
+[,3] UrbanPop (numerisch): Prozent der städtischen Bevölkerung
+
+[,4] Rape (numerisch): Verhaftungen wegen Vergewaltigung (pro 100.000)
+
+
+###b)
+```{r}
+packageTest('ggplot2')
+packageTest('GGally')
+ggpairs(data)
+```
+
+### c)
+```{r}
+packageTest('factoextra')
+
+pca <- princomp(data)
+fviz_eig(pca)
+```
+
+* Erste Hauptkomponente erklärt bereits 96.6% der Varianz.
+
+```{r}
+fviz_pca_ind(pca,
+             col.ind = "cos2", # Color by the quality of representation
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+             )
+
+```
+
+
+```{r}
+fviz_pca_var(pca,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+             )
+```
+
+* Loadings erklären die Korrelation zwischen Variablen und Hauptkomponenten.
+
+* Laut Grafik: Assault stark positiv mit Hauptkomponente 1 korreliert, UrbanPop stark negativ mit Hauptkomponente 2 korreliert.
+
+* Loadings:
+
+```{r}
+pca$loadings
+```
+
+### d)
+```{r}
+pca_std <- princomp(data, cor = TRUE)
+fviz_eig(pca_std)
+```
+
+* Erste Hauptkomponente erklärt nun "nur" noch 62% der Varianz.
+
+```{r}
+fviz_pca_ind(pca_std,
+             col.ind = "cos2", # Color by the quality of representation
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+             )
+```
+
+```{r}
+fviz_pca_var(pca_std,
+             col.var = "contrib", # Color by contributions to the PC
+             gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+             repel = TRUE     # Avoid text overlapping
+             )
+```
+
+* Loadings:
+
+```{r}
+pca_std$loadings
+```
+
+
+
+Standardisierung ist für PCA wichtig, da es sich um eine Varianzmaximierungsaufgabe handelt. Es projiziert die Originaldaten auf Richtungen, die die Varianz maximieren. 
+Im nicht-standardisierten Fall in unserem Beispiel scheint es, als würde die erste Komponente die ganze Varianz in den Daten erklären (siehe Screeplot).
+
+Wenn Sie sich den gleichen Plot nach Standardisierung der Daten ansehen, wird klar, dass auch die anderen Komponenten zur Varianzerklärung beitragen. Der Grund dafür ist, dass PCA versucht, die Varianz jeder Komponente zu maximieren. 
+
+Schauen wir uns die Kovarianzmatrix des nicht-standardisierten Datensatzes an:
+
+```{r}
+cov(data)
+```
+
+Nun wird, klar, dass die PCA auf den nicht-standardisierten Daten natürlich "entscheidet", stark in Richtung der Variable "Assault" zu projizieren, da deren Varianz weitaus größer ist, als die der anderen Variablen. 
+
+Eine Standardisierung in unserem Beispiel ist deshalb empfehlenswert.
