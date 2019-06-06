@@ -1,0 +1,67 @@
+---
+output: pdf_document
+header-includes: 
+- \usepackage[utf8]{inputenc}
+- \usepackage[T1]{fontenc}
+- \usepackage[ngerman]{babel}
+- \usepackage{amsmath,amssymb,amsthm}
+- \usepackage{dsfont}
+- \usepackage{listings}
+- \usepackage{floatrow}
+- \usepackage{fancyhdr}
+- \pagestyle{fancy}
+- '\fancyhead[C,C]{Gruppe 11: Robin Baudisch, Merlin Kopfmann, Maximilian Neudert}'
+- \fancyhead[L]{}
+- \fancyhead[R]{}
+- \fancyfoot[C,C]{\thepage}
+- \renewcommand{\footrulewidth}{0.4pt}
+- '\newcommand{\cov}[1]{\operatorname{Cov}\left( #1 \right)}'
+- '\newcommand{\cor}[1]{\operatorname{Cor}\left( #1 \right)}'
+- '\newcommand{\V}[1]{\mathbf{\operatorname{V}}\left( #1 \right)}'
+- '\newcommand{\E}[1]{\mathbf{\operatorname{E}}\left( #1 \right)}'
+---
+
+<style type="text/css">
+body{
+  font-size: 12px;
+}
+h1 {
+  font-size: 18px;
+}
+h1 {
+  font-size: 14px;
+}
+h1 {
+  font-size: 12px;
+}
+</style>
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(error=TRUE,     # Keep compiling upon error
+                      collapse=TRUE,  # collapse by default
+                      echo=TRUE,      # echo code by default
+                      comment = "#>", # change comment character
+                      warning=TRUE,   # show R warnings
+                      message=FALSE,  # show R messages
+                      out.width = "100%",
+                      out.height = "100%",
+                      fig.width = 10)
+
+packageTest<- function(x)  {
+    if (!require(x,character.only = TRUE))  {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+}
+```
+
+<!---** Hochschule Darmstadt | Studiengang Data Science | Sommersemester 2019 **--->
+
+```{r}
+set.seed(42)
+```
+
+# Arbeitsblatt 9
+
+## Aufgabe 1
+
