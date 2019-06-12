@@ -64,7 +64,19 @@ set.seed(42)
 # Arbeitsblatt 9
 
 ## Aufgabe 1
+Unterschiede hinsichtlich
 
+  * der Voraussetzungen an die Zielvariable:
+      Bei Diskriminanzanalyse und KNN auch Multilabel-Classification möglich, bei logistischer Regression nur Binary-Classification.
+      
+  * den Voraussetzungen an die Einflussvariablen:
+      Bei logistischer Regression und KNN keine Normalverteilungsannahme der Einflussvariablen nötig, bei Diskriminanzanalyse schon.
+  
+  * der resultierenden Klassifikationsgrenzen:
+      Bei logistischer Regression und KNN sind Klassifikationsgrenzen interpretierbar, da es sich um geschätzte Wahrscheinlichkeiten handelt, bei        Diskriminanzanalyse ist eine Interpretation nicht möglich.
+      
+  * den Konsequenzen einer Standardisierung von Einflussvariablen:
+      Bei KNN ist eine Standardisierung nötig (nur hilfreich?), da Distanzmaße skalenabhängig sind, logistische Regression und Diskriminanzanalyse sind skalenunabhängig.
 
 ## Aufgabe 2
 
@@ -103,7 +115,7 @@ Für einen gegebenen Prädiktor (z.B. x1) entspricht der zugehörige Beta-Koeffi
 
 Wenn die Odds Ratio 2 ist, dann sind die Chancen, dass das Ereignis eintritt (Ereignis = 1), doppelt so hoch, wenn der Prädiktor x vorhanden ist (x = 1) als für ein Fehlen des Prädiktors (x = 0).
 
-So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt zu sein, um das `r 5/exp(log_reg$coefficients[3])`-fache erhöht $\left(\frac{5}{exp(\beta_{bmi})}\right)$.
+So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt zu sein, um das `r exp(log_reg$coefficients[3])*5`-fache erhöht $\left(exp(\beta_{bmi})\cdot5\right)$.
 
 
 ### d)
@@ -136,9 +148,77 @@ misclass_rate
 sensitivity
 specificity
 
-plot.roc(diab$diabetes, diab$pgc+diab$bmi)
+plot.roc(diab$diabetes, predict.glm(log_reg, type="response"))
 points(specificity, sensitivity, col="red", pch = 16)
 ```
+
+### f)
+```{r}
+packageTest("StatMeasures")
+packageTest("ggplot2")
+
+diab$prob <- predict.glm(log_reg, type="response")
+diab$decile <- decile(diab$prob)
+
+actual <- c()
+predicted <- c()
+
+for (decile in seq(1,10)){
+  predicted <- append(predicted, length(diab$pregn[diab$decile == decile])
+                      *mean(diab$prob[diab$decile == decile]))
+  actual <- append(actual, length(diab$pregn[(diab$decile == decile) 
+                                             & (diab$diabetes == 1)]))
+}
+
+decile_df <- data.frame(actual, predicted)
+ggplot(aes(x=actual, y=predicted), data = decile_df) +
+  geom_point() +
+  geom_abline(slope=1, intercept=0, colour = 'darkgreen') +
+  ggtitle("Dezile: Erwartete vs beobachtete Frauen mit Diabetes")
+```
+
+### g)
+```{r}
+ggplot(diab, aes(x=insulin)) + 
+  geom_histogram(bins = 15) +
+  ggtitle("Histogramm der Variable Insulin")
+
+test <- NULL
+test$log_insulin <- log1p(diab$insulin)
+test <- as.data.frame(test)
+
+ggplot(test, aes(x=log_insulin)) + 
+  geom_histogram(bins = 15) +
+  ggtitle("Histogramm der Variable log(1+Insulin)")
+
+diab$log_insulin <- log1p(diab$insulin)
+
+log_reg1 <- glm(diabetes~pgc+bmi+log_insulin, family=binomial(link='logit'), data=diab)
+
+test <- NULL
+test$y.true <- diab$diabetes
+test$y.pred <- predict.glm(log_reg1, type="response")
+
+test$y.pred[test$y.pred > 0.5] = 1
+test$y.pred[test$y.pred <= 0.5] = 0
+
+confusion_matrix <- table(test)
+confusion_matrix
+
+misclass_rate <- 1-sum(diag(confusion_matrix))/sum(confusion_matrix)
+
+sensitivity <- confusion_matrix[2,2]/(confusion_matrix[2,2] + confusion_matrix[2,2])
+
+specificity <- confusion_matrix[1,1]/(confusion_matrix[1,1] + confusion_matrix[1,2])
+
+misclass_rate
+sensitivity
+specificity
+
+plot.roc(diab$diabetes, predict.glm(log_reg1, type="response"))
+```
+
+
 ## Aufgabe 3
 
 ```{r}
