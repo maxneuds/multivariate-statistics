@@ -147,12 +147,13 @@ packageTest('class')
 nor <-function(x) { (x -min(x))/(max(x)-min(x))   }
 ran <- sample(1:nrow(diab), 0.5 * nrow(diab))
 diab_norm <- as.data.frame(lapply(diab[,c(2,6)], nor))
+#...oder alle Variablen zur Prognose?
 
 train <- diab_norm[ran,]
 test <- diab_norm[-ran,]
 
-target_category <- diab[ran,5]
-test_category <- diab[-ran,5]
+target_category <- diab[ran,8]
+test_category <- diab[-ran,8]
 
 knn1 <- knn(train,test,cl=target_category,k=1)
 knn5 <- knn(train,test,cl=target_category,k=5)
