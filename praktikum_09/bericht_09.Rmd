@@ -142,6 +142,7 @@ points(specificity, sensitivity, col="red", pch = 16)
 ## Aufgabe 3
 
 ```{r}
+set.seed(222)
 packageTest('class')
 
 nor <-function(x) { (x -min(x))/(max(x)-min(x))   }
