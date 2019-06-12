@@ -140,3 +140,33 @@ plot.roc(diab$diabetes, diab$pgc+diab$bmi)
 points(specificity, sensitivity, col="red", pch = 16)
 ```
 ## Aufgabe 3
+
+```{r}
+packageTest('class')
+
+nor <-function(x) { (x -min(x))/(max(x)-min(x))   }
+ran <- sample(1:nrow(diab), 0.5 * nrow(diab))
+diab_norm <- as.data.frame(lapply(diab[,c(2,6)], nor))
+
+train <- diab_norm[ran,]
+test <- diab_norm[-ran,]
+
+target_category <- diab[ran,5]
+test_category <- diab[-ran,5]
+
+knn1 <- knn(train,test,cl=target_category,k=1)
+knn5 <- knn(train,test,cl=target_category,k=5)
+knn10 <- knn(train,test,cl=target_category,k=10)
+
+conf1 <- table(knn1,test_category)
+conf5 <- table(knn5,test_category)
+conf10 <- table(knn10,test_category)
+
+error <- function(x){
+  1 - sum(diag(x)/(sum(rowSums(x))))
+}
+
+error(conf1)
+error(conf5)
+error(conf10)
+```
