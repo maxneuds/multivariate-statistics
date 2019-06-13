@@ -117,7 +117,7 @@ Für einen gegebenen Prädiktor (z.B. x1) entspricht der zugehörige Beta-Koeffi
 
 Wenn die Odds Ratio 2 ist, dann sind die Chancen, dass das Ereignis eintritt (Ereignis = 1), doppelt so hoch, wenn der Prädiktor x vorhanden ist (x = 1) als für ein Fehlen des Prädiktors (x = 0).
 
-So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt zu sein, um das `r exp(log_reg$coefficients[3])*5`-fache erhöht $\left(\exp(\beta_{\operatorname{BMI}})\cdot5\right)$.
+So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt um `r round(1 - 1 / exp(log_reg$coefficients[3] * 5), 2)`% erhöht $1 - 1 / \exp(5 \beta_{\operatorname{BMI}})$.
 
 
 ### d)
@@ -224,7 +224,6 @@ plot.roc(diab$diabetes, predict.glm(log_reg1, type="response"))
 ## Aufgabe 3
 
 ```{r}
-set.seed(222)
 packageTest('class')
 
 nor <-function(x) { (x -min(x))/(max(x)-min(x))   }
