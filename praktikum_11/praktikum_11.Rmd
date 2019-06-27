@@ -83,21 +83,17 @@ library('VIM')
 
 ```{r}
 clust <- format(clust, scientific = FALSE)
-nrow(clust)
 ```
 
 
 ```{r}
 clust[c(1:40)] <- lapply(clust[c(1:40)], as.numeric)
-str(clust)
 ```
 
 
 Skalieren der Daten
 ```{r}
-
 scaled_data = t(as.matrix(scale(clust)))
-
 ```
 
 
