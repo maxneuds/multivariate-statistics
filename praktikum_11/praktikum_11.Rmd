@@ -69,49 +69,34 @@ Multivariate Statistik\\
 \normalsize
 SoSe 2019\\
 Antje Jahn (FBMN, h\_da)\\
-BNeudert, Baudisch, Kopfmann\\
+Neudert, Baudisch, Kopfmann\\
 \end{centering}
 
 # Aufgabe 1 a)
 ```{r}
 
-load("clust.RData")
-library(VIM)
-
-aggr(clust)
-
-
-
+clust <- read.csv("Ex11.csv")
+library('VIM')
 
 ```
-Der Datensatz weist keine Missings auf. 
 
 
 ```{r}
-#die e Zahlen umgewandelt
 clust <- format(clust, scientific = FALSE)
-
-colnames(clust) <- c("Column1","Column2", "Column3","Column4")
-
 nrow(clust)
-
-
 ```
 
 
 ```{r}
-
-clust[c(1:4)] <- lapply(clust[c(1:4)], as.numeric)
+clust[c(1:40)] <- lapply(clust[c(1:40)], as.numeric)
 str(clust)
-
-
 ```
 
 
 Skalieren der Daten
 ```{r}
 
-scaled_data = as.matrix(scale(clust))
+scaled_data = t(as.matrix(scale(clust)))
 
 ```
 
@@ -119,7 +104,7 @@ scaled_data = as.matrix(scale(clust))
 
 ```{r}
 #Let us apply kmeans for k=3 clusters 
-kmm = kmeans(scaled_data,3,nstart = 60,iter.max = 15) #we keep number of iter.max=15 to ensure the algorithm converges and nstart=50 to #ensure that atleat 50 random sets are choosen  
+kmm = kmeans(scaled_data,5,nstart = 60,iter.max = 15) #we keep number of iter.max=15 to ensure the algorithm converges and nstart=50 to #ensure that atleat 50 random sets are choosen  
 kmm
 
 
@@ -132,7 +117,7 @@ kmm
 Elbow-Method
 ```{r}
 #Elbow Method for finding the optimal number of clusters
-set.seed(333)
+set.seed(42)
 # Compute and plot wss for k = 2 to k = 15.
 k.max <- 15
 data <- scaled_data
