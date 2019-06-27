@@ -99,15 +99,9 @@ scaled_data = t(as.matrix(scale(clust)))
 
 
 ```{r}
-#Let us apply kmeans for k=3 clusters 
-kmm = kmeans(scaled_data,5,nstart = 60,iter.max = 15) #we keep number of iter.max=15 to ensure the algorithm converges and nstart=50 to #ensure that atleat 50 random sets are choosen  
+kmm = kmeans(scaled_data,5,nstart = 60) 
 kmm
-
-
-
-
 ```
-
 
 
 Elbow-Method
