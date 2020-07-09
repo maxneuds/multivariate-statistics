@@ -1,0 +1,177 @@
+---
+author: Neudert, Baudisch, Kopfmann
+date: \today
+output: pdf_document
+header-includes: 
+    - \usepackage{amsthm}
+    - \usepackage{xcolor}
+documentclass: article
+<!---output: beamer_presentation--->
+---
+
+
+
+
+
+<!--- Below are global settings for knitr. You can override any of them by adding the changes to individual chunks --->
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(error=TRUE,        # Keep compiling upon error
+                      collapse=TRUE,     # collapse by default
+                      echo=TRUE,         # echo code by default
+                      comment = "#>",    # change comment character
+                      fig.width = 9,     # set figure width
+                      out.width = "90%", # set width of displayed images
+                      warning=TRUE,      # show R warnings
+                      message=FALSE)     # show R messages
+
+packageTest<- function(x)  {
+    if (!require(x,character.only = TRUE))  {
+      install.packages(x,dep=TRUE)
+      if(!require(x,character.only = TRUE)) stop("Package not found")
+    }
+}
+
+options(warn=-1)
+```
+
+
+<!--- Solution Region --->
+<style>
+#solution {
+  background-color: #8FBC8F;
+  border-style: solid;
+  border-color: blue;
+  margin-left: 20px;
+  margin-bottom: 15px;
+  padding: 5px;
+}
+</style>
+
+
+
+<!---**Wintersemester 2016 |Studiengang Data Science | Hochschule Darmstadt **--->
+
+
+
+
+\theoremstyle{break}
+\newtheorem{auf}{Aufgabe}
+
+\newcommand{\R}{{\sffamily R} }
+
+\begin{centering}
+%\vspace{-2 cm}
+\Huge
+{\bf Uebung 11}\\
+\Large
+Multivariate Statistik\\
+\normalsize
+SoSe 2019\\
+Antje Jahn (FBMN, h\_da)\\
+Neudert, Baudisch, Kopfmann\\
+\end{centering}
+
+# Aufgabe 1 a)
+```{r}
+
+clust <- read.csv("Ex11.csv")
+library('VIM')
+
+```
+
+
+```{r}
+clust <- format(clust, scientific = FALSE)
+```
+
+
+```{r}
+clust[c(1:40)] <- lapply(clust[c(1:40)], as.numeric)
+```
+
+
+Skalieren der Daten
+```{r}
+scaled_data = t(as.matrix(scale(clust)))
+```
+
+
+
+```{r}
+kmm = kmeans(scaled_data,5,nstart = 60) 
+```
+
+
+Elbow-Method
+```{r}
+#Elbow Method for finding the optimal number of clusters
+set.seed(42)
+# Compute and plot wss for k = 2 to k = 15.
+k.max <- 15
+data <- scaled_data
+wss <- sapply(1:k.max, 
+              function(k){kmeans(data, k, nstart=60,iter.max = 15 )$tot.withinss})
+wss
+plot(1:k.max, wss,
+     type="b", pch = 19, frame = FALSE, 
+     xlab="Number of clusters K",
+     ylab="Total within-clusters sum of squares")
+
+
+
+```
+Elbow-Kriterium: Beim Elbow-Kriterium werden die Fehlerquadratsummen in ein Diagramm abgetragen. Zeigt sich im Kurvenverlauf ein Knick
+(„Ellbogen“), so kann dieser Wert als Entscheidungskriterium für die Clusteranzahl verwendet werden. 
+
+Optimale Anzahl der Cluster K=4.
+
+## Aufgabe 2 a)
+In diesem Aufgabenteil fuehren wir den Kmeans Algorithmus auf den clust Datensatz durch fuer die Werte k={2, ..., 7} und visualisieren anschliessend die Cluster.
+```{r}
+load("clust.RData")
+packageTest("cluster")
+packageTest("factoextra")
+data <- clust
+colnames(data) <- c("x1", "x2", "x3", "x4")
+data <- scale(data)
+for(i in 2:7) {
+  par(mfrow=c(6,1))
+  eclust(data, "kmeans", k=i)
+}
+```
+
+## b)
+Nun berechnen wir die Silhouetten sowie die Silhouetten-Koeffizienten fuer die Clusterungen aus a) und visualisieren anschliessend die Silhouetten inkl der Koeffizienten.
+```{r}
+for(i in 2:7){
+  km.res <- eclust(data, "kmeans", k=i, graph=FALSE)
+  sil <- silhouette(km.res$cluster, dist(data))
+  plot(sil, main=sprintf("Silhouette (k=%d)",i))
+}
+
+```
+
+
+##c)
+Die Silhouette eines Datenpunktes entspricht einem Guetekriterium der Cluster. Sie gibt an, wie aehnlich bzw. unaehnlich ein Datenpunk zu seinen Nachbarpunkten im Mittel ist. Dabei werden die Vergleiche zwischen dem Datenpunkt und den Nachbarpunkten innerhalb des eigenen Clusters gemacht sowie zwischen dem Datenpunk und den Nachbarpunkten des nächsten Nachbar-Clusters.  
+Die Silhouette kann Werte aus dem Intervall [-1,1] annehmen.  
+1 bedeutet dabei, dass der Datenpunkt im Mittel relativ zentral innerhalb des eigenen Clusters liegt und somit weiter entfernt zu den Nachbarklustern ist. Diese Eigenschaft entspricht einem guten Clustering.  
+-1 bedeutet, dass der Datenpunkt im Mittel naeher zum Nachbar-Cluster liegt als zum eigenen Cluster.  
+0 wird einem Datenpunkt zugeordnet, wenn ein Cluster ausschliesslich diesen Datenpunkt enthaelt.  
+maximimieren wir den Wert der Silhouette, so erhalten wir den Silhouetten-Koeffizienten.  
+Vergleichen wir die Modelle mit unterschiedlichen Anzahl an Cluster, so waehlen wir das Modell mit k=4, da dieser die hoechste Silhouette besitzt sowie niedrigste Komplexitaet. Alle Cluster sind aehnlich gefuellt. Erhoehen wir die Anzahl der Cluster, so bleibt der Wert der Silhouette gleich, jedoch erhalten wir Silhouetten Werte gleich 0, diese entsprechen einem Cluster von einem Datenpunkt.
+
+
+## d)
+Da das Ergebnis des K-Means-Verfahrens sehr stark von dem Initialzustand abhaengt, wiederholen wir im Folgenden den Algorithmus und setzen dabei fuer jeden Wert $k \in \{2, ..., 7\}$ zufaellig einen Startzustand. Diese Option wird mit dem parameter $nstart$ erreicht, den wir z.B. auf 25 setzen, so dass der Algorithmus 25 Mal durchlaeuft mit jeweils zufaelligem Startzustand. Im default betraegt dieser Parameterwert 1.
+```{r}
+for(i in 2:7) {
+  km.res <- eclust(data, "kmeans", k=i, graph=FALSE, nstart=25)
+  sil <- silhouette(km.res$cluster, dist(data))
+  plot(sil, main="Sil")
+}
+```
+In unserem Fall erkennen keine signifikanten Unterschiede zu unserer Beobachtung auf Aufgabenteil b).
+
+

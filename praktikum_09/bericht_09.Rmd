@@ -80,8 +80,6 @@ Unterschiede hinsichtlich
 
 ## Aufgabe 2
 
-### a)
-
 ```{r}
 load("diab.RData")
 
@@ -117,7 +115,7 @@ Für einen gegebenen Prädiktor (z.B. x1) entspricht der zugehörige Beta-Koeffi
 
 Wenn die Odds Ratio 2 ist, dann sind die Chancen, dass das Ereignis eintritt (Ereignis = 1), doppelt so hoch, wenn der Prädiktor x vorhanden ist (x = 1) als für ein Fehlen des Prädiktors (x = 0).
 
-So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt zu sein, um das `r exp(log_reg$coefficients[3])*5`-fache erhöht $\left(\exp(\beta_{\operatorname{BMI}})\cdot5\right)$.
+So beträgt beispielsweise der Regressionskoeffizient für BMI `r log_reg$coefficients[3]`. Dies deutet darauf hin, dass eine Erhöhung des BMI um 5 Einheiten die Wahrscheinlichkeit, an Diabetes erkrankt zu sein, um das `r exp(log_reg$coefficients[3])*5`-fache erhöht $\left(exp(\beta_{bmi})\cdot5\right)$.
 
 
 ### d)
@@ -142,7 +140,7 @@ confusion_matrix
 
 misclass_rate <- 1-sum(diag(confusion_matrix))/sum(confusion_matrix)
 
-sensitivity <- confusion_matrix[2,2]/(confusion_matrix[2,1] + confusion_matrix[2,2])
+sensitivity <- confusion_matrix[2,2]/(confusion_matrix[2,2] + confusion_matrix[2,2])
 
 specificity <- confusion_matrix[1,1]/(confusion_matrix[1,1] + confusion_matrix[1,2])
 
@@ -209,7 +207,7 @@ confusion_matrix
 
 misclass_rate <- 1-sum(diag(confusion_matrix))/sum(confusion_matrix)
 
-sensitivity <- confusion_matrix[2,2]/(confusion_matrix[2,1] + confusion_matrix[2,2])
+sensitivity <- confusion_matrix[2,2]/(confusion_matrix[2,2] + confusion_matrix[2,2])
 
 specificity <- confusion_matrix[1,1]/(confusion_matrix[1,1] + confusion_matrix[1,2])
 
